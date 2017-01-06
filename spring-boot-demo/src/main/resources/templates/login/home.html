@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8" />
+<title>Insert title here</title>
+<link href="bootstrap-3.3.7-dist/css/bootstrap.css" rel="stylesheet" />
+<script type="text/javascript" src="bootstrap-3.3.7-dist/js/bootstrap.js"></script>
+</head>
+<body>
+	<h1>welcome</h1>
+	<form th:action="@{/logout}" method="post">
+		<button class="btn btn-primary" type="submit">exit</button>
+	</form>
+</body>
+</html>

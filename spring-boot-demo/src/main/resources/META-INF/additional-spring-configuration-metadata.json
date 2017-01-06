@@ -1,0 +1,12 @@
+{"properties": [
+  {
+    "name": "security.loginPage",
+    "type": "java.lang.String",
+    "description": "A description for 'security.loginPage'"
+  },
+  {
+    "name": "security.homePage",
+    "type": "java.lang.String",
+    "description": "A description for 'security.homePage'"
+  }
+]}

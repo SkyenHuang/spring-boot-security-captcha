@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8" />
+<title>Insert title here</title>
+<link href="bootstrap-3.3.7-dist/css/bootstrap.css" rel="stylesheet" />
+<script type="text/javascript" src="bootstrap-3.3.7-dist/js/bootstrap.js"></script>
+<style type="text/css">
+.captcha {
+	height: 34px;
+}
+
+.captcha-login-form {
+	width: 300px;
+	height: 300px;
+	margin: auto;
+	position: absolute;
+	left: 0;
+	top: 0;
+	right: 0;
+	bottom: 0;
+}
+
+.login-form {
+	width: 300px;
+	height: 200px;
+	margin: auto;
+	position: absolute;
+	left: 0;
+	top: 0;
+	right: 0;
+	bottom: 0;
+}
+</style>
+
+</head>
+<body>
+	<form class="form well" th:classappend="${captcha!=null ? 'captcha-login-form':'login-form'}" th:action="@{/login}" method="post">
+		<div class="form-group">
+			<div class="input-group">
+				<span class="input-group-addon">
+					<i class="glyphicon glyphicon-user"></i>
+				</span>
+				<input class="form-control" type="text" id="username" name="username" autofocus="autofocus" />
+			</div>
+		</div>
+		<div class="form-group">
+			<div class="input-group">
+				<span class="input-group-addon">
+					<i class="glyphicon glyphicon-lock"></i>
+				</span>
+				<input class="form-control" type="password" id="password" name="password" />
+			</div>
+		</div>
+		<div class="form-group" th:if="${captcha!=null}">
+			<img class="captcha img-thumbnail center-block" alt="captcha" th:src="'data:image/png;base64,'+${captcha.getBase64Img()}" />
+		</div>
+		<div class="form-group">
+			<div class="input-group">
+				<span class="input-group-addon text-primary">验证码</span>
+				<input class="form-control input-captcha" type="text" name="captcha" />
+			</div>
+		</div>
+		<div class="form-group">
+			<button type="submit" class="btn btn-primary center-block">登录</button>
+		</div>
+		<p class="text-center" th:classappend="${param.error != null ? 'text-danger':'text-success'}" th:if="${session.SPRING_SECURITY_LAST_EXCEPTION != null}"
+			th:text="${session.SPRING_SECURITY_LAST_EXCEPTION.message}"></p>
+	</form>
+</body>
+</html>
