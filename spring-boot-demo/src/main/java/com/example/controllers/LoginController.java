@@ -11,7 +11,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import com.example.captcha.CaptchaAuthenticationProvider;
+import com.example.captcha.DaoWithCaptchaAuthenticationProvider;
 import com.example.captcha.utils.CaptchaFactory.Captcha;
 
 @RequestMapping("login")
@@ -19,7 +19,7 @@ import com.example.captcha.utils.CaptchaFactory.Captcha;
 public class LoginController {
 
 	@Autowired
-	private CaptchaAuthenticationProvider captchaAuthenticationProvider;
+	private DaoWithCaptchaAuthenticationProvider captchaAuthenticationProvider;
 
 	@RequestMapping({ "" })
 	public String login(Model model, HttpSession httpSession)

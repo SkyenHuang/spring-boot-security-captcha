@@ -18,15 +18,15 @@ import com.example.captcha.utils.CaptchaFactory;
 
 public class LoginWithCaptchaFailureHandler extends SimpleUrlAuthenticationFailureHandler {
 
-	private final CaptchaAuthenticationProvider captchaAuthenticationProvider;
+	private final DaoWithCaptchaAuthenticationProvider captchaAuthenticationProvider;
 
-	public LoginWithCaptchaFailureHandler(CaptchaAuthenticationProvider captchaAuthenticationProvider) {
+	public LoginWithCaptchaFailureHandler(DaoWithCaptchaAuthenticationProvider captchaAuthenticationProvider) {
 		super();
 		this.captchaAuthenticationProvider = captchaAuthenticationProvider;
 	}
 
 	public LoginWithCaptchaFailureHandler(String defaultFailureUrl,
-			CaptchaAuthenticationProvider captchaAuthenticationProvider) {
+			DaoWithCaptchaAuthenticationProvider captchaAuthenticationProvider) {
 		super(defaultFailureUrl);
 		this.captchaAuthenticationProvider = captchaAuthenticationProvider;
 	}
@@ -38,7 +38,18 @@ public class LoginWithCaptchaFailureHandler extends SimpleUrlAuthenticationFailu
 	@Override
 	public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response,
 			AuthenticationException exception) throws IOException, ServletException {
-		recordLoginFailureTimes(request.getSession());
+		if (exception instanceof CaptchaException) {
+			try {
+				captchaAuthenticationProvider.captchaMap.put(request.getSession().getId(),
+						new CaptchaFactory().createCaptcha());
+			} catch (FontFormatException e) {
+				e.printStackTrace();
+			} catch (URISyntaxException e) {
+				e.printStackTrace();
+			}
+		} else {
+			recordLoginFailureTimes(request.getSession());
+		}
 		super.onAuthenticationFailure(request, response, exception);
 	}
 

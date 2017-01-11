@@ -18,10 +18,8 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
-import com.example.captcha.CaptchaAuthenticationFailureHandler;
-import com.example.captcha.CaptchaAuthenticationFilter;
-import com.example.captcha.CaptchaAuthenticationProvider;
-import com.example.captcha.CaptchaAuthenticationSuccessHandler;
+import com.example.captcha.UsernamePasswordWithCaptchaAuthenticationFilter;
+import com.example.captcha.DaoWithCaptchaAuthenticationProvider;
 import com.example.captcha.LoginWithCaptchaFailureHandler;
 import com.example.captcha.LoginWithCaptchaSuccessHandler;
 
@@ -44,7 +42,7 @@ public class WebSecurityConfig {
 		private WebSecurityConfig webSecurityConfig;
 
 		@Autowired
-		private CaptchaAuthenticationFilter captchaAuthenticationFilter;
+		private UsernamePasswordWithCaptchaAuthenticationFilter usernamePasswordWithCaptchaAuthenticationFilter;
 
 		@Autowired
 		private LoginWithCaptchaFailureHandler loginWithCaptchaFailureHandler;
@@ -54,11 +52,13 @@ public class WebSecurityConfig {
 
 		@Override
 		protected void configure(HttpSecurity http) throws Exception {
-			http.authorizeRequests().antMatchers("/login", "/favicon.ico", "/bootstrap-3.3.7-dist/**").permitAll()
-					.anyRequest().authenticated().and().formLogin().loginPage(webSecurityConfig.getLoginPage())
-					.failureHandler(loginWithCaptchaFailureHandler).successHandler(loginWithCaptchaSuccessHandler).and()
-					.logout().logoutUrl("/logout").logoutSuccessUrl("/login").and()
-					.addFilterBefore(captchaAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+			http.authorizeRequests().antMatchers("/login", "/favicon.ico", "/bootstrap-3.3.7-dist/**", "/js/**")
+					.permitAll().anyRequest().authenticated().and().formLogin()
+					.loginPage(webSecurityConfig.getLoginPage()).failureHandler(loginWithCaptchaFailureHandler)
+					.successHandler(loginWithCaptchaSuccessHandler).and().logout().logoutUrl("/logout")
+					.logoutSuccessUrl("/login?logout").and()
+					.addFilterBefore(usernamePasswordWithCaptchaAuthenticationFilter,
+							UsernamePasswordAuthenticationFilter.class);
 		}
 
 		@Override
@@ -77,55 +77,44 @@ public class WebSecurityConfig {
 	}
 
 	@Bean
-	public CaptchaAuthenticationFilter captchaAuthenticationFilter(AuthenticationManager captchaAuthenticationManager,
-			CaptchaAuthenticationSuccessHandler captchaAuthenticationSuccessHandler,
-			CaptchaAuthenticationFailureHandler captchaAuthenticationFailureHandler) {
-		CaptchaAuthenticationFilter filter = new CaptchaAuthenticationFilter(
-				new AntPathRequestMatcher("/login", "POST"));
+	public UsernamePasswordWithCaptchaAuthenticationFilter usernamePasswordWithCaptchaAuthenticationFilter(
+			AuthenticationManager captchaAuthenticationManager,
+			LoginWithCaptchaSuccessHandler loginWithCaptchaSuccessHandler,
+			LoginWithCaptchaFailureHandler loginWithCaptchaFailureHandler) {
+		UsernamePasswordWithCaptchaAuthenticationFilter filter = new UsernamePasswordWithCaptchaAuthenticationFilter(
+				new AntPathRequestMatcher(getLoginPage(), "POST"));
 		filter.setAuthenticationManager(captchaAuthenticationManager);
-		filter.setAuthenticationFailureHandler(captchaAuthenticationFailureHandler);
-		filter.setAuthenticationSuccessHandler(captchaAuthenticationSuccessHandler);
-		filter.setContinueChainBeforeSuccessfulAuthentication(true);
+		filter.setAuthenticationFailureHandler(loginWithCaptchaFailureHandler);
+		filter.setAuthenticationSuccessHandler(loginWithCaptchaSuccessHandler);
 		return filter;
 	}
 
-	@Bean(name = "captchaAuthenticationProvider")
-	public CaptchaAuthenticationProvider captchaAuthenticationProvider() {
-		CaptchaAuthenticationProvider captchaAuthenticationProvider = new CaptchaAuthenticationProvider();
-		return captchaAuthenticationProvider;
+	@Bean(name = "daoWithCaptchaAuthenticationProvider")
+	public DaoWithCaptchaAuthenticationProvider daoWithCaptchaAuthenticationProvider() {
+		DaoWithCaptchaAuthenticationProvider provider = new DaoWithCaptchaAuthenticationProvider();
+		provider.setUserDetailsService(myUserDetailsService);
+		return provider;
 	}
 
-	@Bean(name = "captchaAuthenticationManager")
-	public AuthenticationManager captchaAuthenticationManager(
-			CaptchaAuthenticationProvider captchaAuthenticationProvider) {
+	@Bean(name = "usernamePasswordWithCaptchaAuthenticationManager")
+	public AuthenticationManager usernamePasswordWithCaptchaAuthenticationManager(
+			DaoWithCaptchaAuthenticationProvider daoWithCaptchaAuthenticationProvider) {
 		List<AuthenticationProvider> list = new ArrayList<>();
-		list.add(captchaAuthenticationProvider);
+		list.add(daoWithCaptchaAuthenticationProvider);
 		AuthenticationManager authenticationManager = new ProviderManager(list);
 		return authenticationManager;
 	}
 
-	@Bean(name = "captchaAuthenticationFailureHandler")
-	public CaptchaAuthenticationFailureHandler captchaAuthenticationFailureHandler(
-			CaptchaAuthenticationProvider captchaAuthenticationProvider) {
-		return new CaptchaAuthenticationFailureHandler(getLoginPage() + "?error", captchaAuthenticationProvider);
-	}
-
-	@Bean(name = "captchaAuthenticationSuccessHandler")
-	public CaptchaAuthenticationSuccessHandler captchaAuthenticationSuccessHandler(
-			CaptchaAuthenticationProvider captchaAuthenticationProvider) {
-		return new CaptchaAuthenticationSuccessHandler(captchaAuthenticationProvider);
-	}
-
 	@Bean(name = "loginWithCaptchaFailureHandler")
 	public LoginWithCaptchaFailureHandler loginWithCaptchaFailureHandler(
-			CaptchaAuthenticationProvider captchaAuthenticationProvider) {
-		return new LoginWithCaptchaFailureHandler(getLoginPage() + "?error", captchaAuthenticationProvider);
+			DaoWithCaptchaAuthenticationProvider daoWithCaptchaAuthenticationProvider) {
+		return new LoginWithCaptchaFailureHandler(getLoginPage() + "?error", daoWithCaptchaAuthenticationProvider);
 	}
 
 	@Bean(name = "loginWithCaptchaSuccessHandler")
 	public LoginWithCaptchaSuccessHandler loginWithCaptchaSuccessHandler(
-			CaptchaAuthenticationProvider captchaAuthenticationProvider) {
-		return new LoginWithCaptchaSuccessHandler(getHomePage(), captchaAuthenticationProvider);
+			DaoWithCaptchaAuthenticationProvider daoWithCaptchaAuthenticationProvider) {
+		return new LoginWithCaptchaSuccessHandler(getHomePage(), daoWithCaptchaAuthenticationProvider);
 	}
 
 	public String getHomePage() {

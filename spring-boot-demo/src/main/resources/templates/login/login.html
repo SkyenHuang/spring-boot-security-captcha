@@ -4,6 +4,7 @@
 <meta charset="UTF-8" />
 <title>Insert title here</title>
 <link href="bootstrap-3.3.7-dist/css/bootstrap.css" rel="stylesheet" />
+<script type="text/javascript" src="js/jquery-3.1.1.js"></script>
 <script type="text/javascript" src="bootstrap-3.3.7-dist/js/bootstrap.js"></script>
 <style type="text/css">
 .captcha {
@@ -12,7 +13,7 @@
 
 .captcha-login-form {
 	width: 300px;
-	height: 300px;
+	height: 360px;
 	margin: auto;
 	position: absolute;
 	left: 0;
@@ -23,7 +24,7 @@
 
 .login-form {
 	width: 300px;
-	height: 200px;
+	height: 260px;
 	margin: auto;
 	position: absolute;
 	left: 0;
@@ -36,36 +37,34 @@
 </head>
 <body>
 	<form class="form well" th:classappend="${captcha!=null ? 'captcha-login-form':'login-form'}" th:action="@{/login}" method="post">
+		<h3 class="text-center">login form</h3>
 		<div class="form-group">
 			<div class="input-group">
-				<span class="input-group-addon">
-					<i class="glyphicon glyphicon-user"></i>
+				<input class="form-control" type="text" id="username" name="username" autofocus="autofocus" placeholder="用户名" /> <span class="input-group-addon"> <i class="glyphicon glyphicon-user text-primary"></i>
 				</span>
-				<input class="form-control" type="text" id="username" name="username" autofocus="autofocus" />
 			</div>
 		</div>
 		<div class="form-group">
 			<div class="input-group">
-				<span class="input-group-addon">
-					<i class="glyphicon glyphicon-lock"></i>
+				<input class="form-control" type="password" id="password" name="password" placeholder="密码" /> <span class="input-group-addon"> <i class="glyphicon glyphicon-lock text-primary"></i>
 				</span>
-				<input class="form-control" type="password" id="password" name="password" />
 			</div>
 		</div>
 		<div class="form-group" th:if="${captcha!=null}">
 			<img class="captcha img-thumbnail center-block" alt="captcha" th:src="'data:image/png;base64,'+${captcha.getBase64Img()}" />
 		</div>
-		<div class="form-group">
+		<div class="form-group" th:if="${captcha!=null}">
 			<div class="input-group">
-				<span class="input-group-addon text-primary">验证码</span>
-				<input class="form-control input-captcha" type="text" name="captcha" />
+				<span class="input-group-addon text-primary">验证码</span> <input class="form-control input-captcha" type="text" name="captcha" />
 			</div>
 		</div>
 		<div class="form-group">
-			<button type="submit" class="btn btn-primary center-block">登录</button>
+			<button type="submit" class="btn btn-primary center-block">
+				登录<span class="glyphicon glyphicon-hand-up"></span>
+			</button>
 		</div>
-		<p class="text-center" th:classappend="${param.error != null ? 'text-danger':'text-success'}" th:if="${session.SPRING_SECURITY_LAST_EXCEPTION != null}"
-			th:text="${session.SPRING_SECURITY_LAST_EXCEPTION.message}"></p>
+		<p class="text-center text-danger" th:if="${param.error!=null and session.SPRING_SECURITY_LAST_EXCEPTION!=null}" th:text="${session.SPRING_SECURITY_LAST_EXCEPTION.message}"></p>
+		<p class="text-center text-success" th:if="${param.logout!=null}" th:text="成功退出"></p>
 	</form>
 </body>
 </html>

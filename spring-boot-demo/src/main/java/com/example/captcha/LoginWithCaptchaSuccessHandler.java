@@ -11,15 +11,15 @@ import org.springframework.security.web.authentication.SimpleUrlAuthenticationSu
 
 public class LoginWithCaptchaSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
-	private final CaptchaAuthenticationProvider captchaAuthenticationProvider;
+	private final DaoWithCaptchaAuthenticationProvider captchaAuthenticationProvider;
 
-	public LoginWithCaptchaSuccessHandler(CaptchaAuthenticationProvider captchaAuthenticationProvider) {
+	public LoginWithCaptchaSuccessHandler(DaoWithCaptchaAuthenticationProvider captchaAuthenticationProvider) {
 		super();
 		this.captchaAuthenticationProvider = captchaAuthenticationProvider;
 	}
 
 	public LoginWithCaptchaSuccessHandler(String defaultUrl,
-			CaptchaAuthenticationProvider captchaAuthenticationProvider) {
+			DaoWithCaptchaAuthenticationProvider captchaAuthenticationProvider) {
 		super(defaultUrl);
 		this.captchaAuthenticationProvider = captchaAuthenticationProvider;
 	}

@@ -4,10 +4,13 @@
 <meta charset="UTF-8" />
 <title>Insert title here</title>
 <link href="bootstrap-3.3.7-dist/css/bootstrap.css" rel="stylesheet" />
+<script type="text/javascript" src="js/jquery-3.1.1.js"></script>
 <script type="text/javascript" src="bootstrap-3.3.7-dist/js/bootstrap.js"></script>
 </head>
 <body>
-	<h1>welcome</h1>
+	<h1>
+		welcome <span th:text="${session.SPRING_SECURITY_CONTEXT.authentication.principal.getUsername()}">Bob</span>
+	</h1>
 	<form th:action="@{/logout}" method="post">
 		<button class="btn btn-primary" type="submit">exit</button>
 	</form>
