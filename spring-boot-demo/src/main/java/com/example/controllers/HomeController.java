@@ -16,12 +16,12 @@ public class HomeController {
 		return "login/home";
 	}
 
-	@RequestMapping("navigator")
-	public String navigator(Model model, HttpServletRequest request) {
+	@RequestMapping("guide")
+	public String guide(Model model, HttpServletRequest request) {
 		String XRequestHeader = request.getHeader("X-Requested-With");
 		if (!StringUtils.isEmpty(XRequestHeader) && XRequestHeader.equals("XMLHttpRequest")) {
 			model.addAttribute("ajax", true);
 		}
-		return "navigator";
+		return "login/guide";
 	}
 }

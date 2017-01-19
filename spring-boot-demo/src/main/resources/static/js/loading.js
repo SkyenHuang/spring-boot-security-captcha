@@ -47,3 +47,38 @@ ProcessBar.prototype.finish = function () {
         content.remove();
     });
 }
+
+var content = $(document.body).find(".content").html();
+window.history.replaceState({
+    'content': content,
+    'title': $('title').html()
+}, '', window.location.href);
+
+window.onpopstate = function (event) {
+    if (event.state) {
+        event.preventDefault();
+        $(document.body).find(".content").children().remove();
+        $(document.body).find(".content").append(event.state.content);
+        $('title').html(event.state.title);
+    }
+}
+
+function loadPage(uri, title) {
+    var processBar = new ProcessBar();
+    processBar.load(50);
+    $.get(uri, function (data) {
+        window.history.pushState(
+            {
+                'content': data,
+            },
+            '', "http://" + window.location.host + uri);
+        $(document.body).find(".content").children().remove();
+        processBar.update(80);
+        $(document.body).find(".content").append($(data));
+
+        processBar.finish();
+        if (title != undefined) {
+            $('title').html(title);
+        }
+    }, "html");
+}

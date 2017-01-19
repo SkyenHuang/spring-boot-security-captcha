@@ -2,15 +2,16 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8" />
-    <title>Insert title here</title>
+    <title>home</title>
 
     <template th:replace="bootstrap">
         <script src="../../static/js/jquery-3.1.1.js"></script>
-        <script src="../../static/js/loading.js"></script>
+        
     </template>
     <script type="text/javascript" th:src="@{/js/loading.js}"></script>
 </head>
 <body>
+    <div th:replace="navigator :: navigator"></div>
     <div class="content">
         <h1>
             welcome <span th:text="${session.SPRING_SECURITY_CONTEXT.authentication.principal.getUsername()}">Bob</span>
@@ -18,20 +19,15 @@
         <form th:action="@{/logout}" method="post">
             <button class="btn btn-primary" type="submit">exit</button>
         </form>
-        <button class="btn btn-primary" onclick="goNavigator()">navigator</button>
+        <button class="btn btn-primary" onclick="loadPage('/guide','guide')">guide</button>
     </div>
+    <script th:src="@{/js/loading.js}" src="../../static/js/loading.js"></script>
     <script type="text/javascript">
-        function goNavigator() {
-            var processBar = new ProcessBar();
-            processBar.load(50);
-            $.get("/navigator", function (data) {
-                $(document.body).find(".content").children().remove();
-                processBar.update(80);
-                $(document.body).find(".content").append($(data));
-                window.history.pushState({}, "test", "http://" + window.location.host + "/navigator")
-                processBar.finish();
-            }, "html");
-        }
+        $(function () {
+            
+        })
+
+        
     </script>
 </body>
 </html>

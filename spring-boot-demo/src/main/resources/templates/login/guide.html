@@ -1,0 +1,17 @@
+﻿<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:remove="${ajax == true ? 'tag':'none'}">
+<head th:remove="${ajax == true ? 'all':'none'}">
+    <meta charset="UTF-8" />
+    <title>guide</title>
+    <link th:replace="bootstrap" rel="import" />
+</head>
+<body th:remove="${ajax == true ? 'tag':'none'}">
+    <div th:replace="navigator :: navigator"></div>
+    <div class="content" th:remove="${ajax == true ? 'tag':'none'}">
+        <h1>giude</h1>
+
+    </div>
+    <script th:src="@{/js/loading.js}" src="../../static/js/loading.js" th:remove="${ajax == true ? 'tag':'none'}"></script>
+</body>
+</html>
