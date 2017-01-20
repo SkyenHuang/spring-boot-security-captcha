@@ -1,4 +1,5 @@
 /// <reference path="jquery-3.1.1.js" />
+/// <reference path="../bootstrap-3.3.7-dist/js/bootstrap.js" />
 /**
  * 
  */
@@ -12,11 +13,9 @@ function ProcessBar(position) {
     this.content.css({
         'position': 'absolute',
         'z-index': '999',
-        'width': this.process + '%',
         'height': 5,
         'background-color': '#428bca',
         'display': 'none',
-
         'left': 0,
         'box-shadow': '0px 0px 5px #333'
     });
@@ -31,6 +30,7 @@ ProcessBar.prototype.update = function (process) {
 }
 
 ProcessBar.prototype.load = function (process) {
+    this.init();
     $(document.body).append(this.content);
     this.content.show();
     this.content.fadeIn('fast');
@@ -39,12 +39,24 @@ ProcessBar.prototype.load = function (process) {
     }
 }
 
+ProcessBar.prototype.init = function () {
+    this.process = 0;
+    this.content.css('width', '0%');
+}
+
 ProcessBar.prototype.finish = function () {
     this.content.animate({ 'width': '100%' }, 'fast');
+    this.content.css('background-color', '#5cb85c');
     var content = this.content;
     this.content.fadeOut('fast', function () {
-        content.hide();
-        content.remove();
+        this.remove();
+    });
+}
+
+ProcessBar.prototype.cancel = function () {
+    this.content.css('background-color', '#d9534f');
+    this.content.fadeOut('fast', function () {
+        this.remove();
     });
 }
 
@@ -62,14 +74,14 @@ window.onpopstate = function (event) {
         $('title').html(event.state.title);
     }
 }
-
-function loadPage(uri, title) {
-    var processBar = new ProcessBar();
+var processBar = new ProcessBar();
+function loadPage(uri, title, callback) {
     processBar.load(50);
     $.get(uri, function (data) {
         window.history.pushState(
             {
                 'content': data,
+                'title': title
             },
             '', "http://" + window.location.host + uri);
         $(document.body).find(".content").children().remove();
@@ -80,5 +92,32 @@ function loadPage(uri, title) {
         if (title != undefined) {
             $('title').html(title);
         }
+        if ('function' == typeof (callback)) {
+            callback();
+        }
     }, "html");
 }
+
+var tip = $('<div class="alert" role="alert"><button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button><p></p></div>');
+tip.css({
+    'position': 'fixed',
+    'top': 0,
+    'left': 0,
+    'width': '100%'
+})
+
+$.ajaxSetup({
+    error: function (xhr, status, error) {
+        processBar.cancel();
+        var cloneTip = tip.clone();
+        cloneTip.find('p').html(error + status);
+        cloneTip.addClass('alert-danger');
+        $(document.body).append(cloneTip);
+        cloneTip.fadeIn('fast');
+        setTimeout(function () {
+            cloneTip.fadeOut('fast', function () {
+                cloneTip.remove();
+            });
+        }, 3000);
+    }
+})

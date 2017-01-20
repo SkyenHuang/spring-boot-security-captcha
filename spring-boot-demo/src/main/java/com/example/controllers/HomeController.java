@@ -12,7 +12,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping("/")
 public class HomeController {
 	@RequestMapping({ "" })
-	public String home(Model model, HttpSession httpSession) {
+	public String home(Model model, HttpSession httpSession, HttpServletRequest request) {
+		String XRequestHeader = request.getHeader("X-Requested-With");
+		if (!StringUtils.isEmpty(XRequestHeader) && XRequestHeader.equals("XMLHttpRequest")) {
+			return "ajax/home";
+		}
 		return "login/home";
 	}
 
@@ -20,7 +24,7 @@ public class HomeController {
 	public String guide(Model model, HttpServletRequest request) {
 		String XRequestHeader = request.getHeader("X-Requested-With");
 		if (!StringUtils.isEmpty(XRequestHeader) && XRequestHeader.equals("XMLHttpRequest")) {
-			model.addAttribute("ajax", true);
+			return "ajax/guide";
 		}
 		return "login/guide";
 	}

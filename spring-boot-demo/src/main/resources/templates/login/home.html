@@ -4,30 +4,255 @@
     <meta charset="UTF-8" />
     <title>home</title>
 
-    <template th:replace="bootstrap">
-        <script src="../../static/js/jquery-3.1.1.js"></script>
-        
-    </template>
-    <script type="text/javascript" th:src="@{/js/loading.js}"></script>
+    <link th:replace="bootstrap" rel="stylesheet" href="../../static/bootstrap-3.3.7-dist/css/bootstrap.css" />
+    <script th:remove="all" src="../../static/js/jquery-3.1.1.js"></script>
+    <script th:remove="all" src="../../static/bootstrap-3.3.7-dist/js/bootstrap.js"></script>
+    <style>
+        .main-content {
+            margin-left: 200px;
+        }
+
+        .nav-tabs {
+            overflow-y: hidden !important;
+        }
+    </style>
 </head>
 <body>
     <div th:replace="navigator :: navigator"></div>
-    <div class="content">
-        <h1>
-            welcome <span th:text="${session.SPRING_SECURITY_CONTEXT.authentication.principal.getUsername()}">Bob</span>
-        </h1>
-        <form th:action="@{/logout}" method="post">
-            <button class="btn btn-primary" type="submit">exit</button>
-        </form>
-        <button class="btn btn-primary" onclick="loadPage('/guide','guide')">guide</button>
+    <div class="container-fluid">
+        <div class="row">
+            <ul class="nav nav-pills nav-stacked col-lg-2 left-menu" role="tablist">
+                <li role="presentation" class="active">
+                    <a href="javascript:void(0)" data-page="/">
+                        home
+                    </a>
+                </li>
+                <li role="presentation">
+                    <a href="javascript:void(0)" data-page="/guide">
+                        guide
+                    </a>
+                </li>
+                <li role="presentation">
+                    <a href="#">
+                        guide
+                    </a>
+                </li>
+                <li role="presentation">
+                    <a href="#">
+                        guide
+                    </a>
+                </li>
+                <li role="presentation">
+                    <a href="#">
+                        guide
+                    </a>
+                </li>
+                <li role="presentation">
+                    <a href="#">
+                        guide
+                    </a>
+                </li>
+                <li role="presentation">
+                    <a href="#">
+                        guide
+                    </a>
+                </li>
+                <li role="presentation">
+                    <a href="#">
+                        guide
+                    </a>
+                </li>
+            </ul>
+            <div class="container col-lg-10 right-content">
+                <div class="row">
+                    <ul class="nav nav-tabs nav-divider top-tabs col-lg-12" role="tablist">
+                        <li role="presentation" class="active">
+                            <a href="#">
+                                home
+                            </a>
+                        </li>
+                        <li role="presentation">
+                            <a href="#">
+                                guide
+                            </a>
+                        </li>
+                        <li role="presentation">
+                            <a href="#">
+                                guide
+                            </a>
+                        </li>
+                        <li role="presentation">
+                            <a href="#">
+                                guide
+                            </a>
+                        </li>
+                        <li role="presentation">
+                            <a href="#">
+                                guide
+                            </a>
+                        </li>
+                        <li role="presentation">
+                            <a href="#">
+                                guide
+                            </a>
+                        </li>
+                        <li role="presentation">
+                            <a href="#">
+                                guide
+                            </a>
+                        </li>
+                        <li role="presentation">
+                            <a href="#">
+                                guide
+                            </a>
+                        </li>
+                        <li role="presentation">
+                            <a href="#">
+                                guide
+                            </a>
+                        </li>
+                        <li role="presentation">
+                            <a href="#">
+                                guide
+                            </a>
+                        </li>
+                        <li role="presentation">
+                            <a href="#">
+                                guide
+                            </a>
+                        </li>
+                        <li role="presentation">
+                            <a href="#">
+                                guide
+                            </a>
+                        </li>
+                        <li role="presentation">
+                            <a href="#">
+                                guide
+                            </a>
+                        </li>
+                        <li role="presentation">
+                            <a href="#">
+                                guide
+                            </a>
+                        </li>
+                        <li role="presentation">
+                            <a href="#">
+                                guide
+                            </a>
+                        </li>
+                        <li role="presentation">
+                            <a href="#">
+                                guide
+                            </a>
+                        </li>
+                        <li role="presentation">
+                            <a href="#">
+                                guide
+                            </a>
+                        </li>
+                        <li role="presentation">
+                            <a href="#">
+                                guide
+                            </a>
+                        </li>
+                        <li role="presentation">
+                            <a href="#">
+                                guide
+                            </a>
+                        </li>
+                        <li role="presentation">
+                            <a href="#">
+                                guide
+                            </a>
+                        </li>
+                        <li role="presentation">
+                            <a href="#">
+                                guide
+                            </a>
+                        </li>
+                        <li role="presentation">
+                            <a href="#">
+                                guide
+                            </a>
+                        </li>
+                        <li role="presentation">
+                            <a href="#">
+                                guide
+                            </a>
+                        </li>
+                        <li role="presentation">
+                            <a href="#">
+                                guide
+                            </a>
+                        </li>
+                        <li role="presentation" class="dropdown">
+                            <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                                Dropdown <span class="caret"></span>
+                            </a>
+                            <ul class="dropdown-menu" role="menu">
+                                <li role="presentation">
+                                    <a href="#">
+                                        home
+                                    </a>
+                                </li>
+                                <li role="presentation">
+                                    <a href="#">
+                                        guide
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+                <div class="row">
+
+                    <div class="content col-lg-12">
+                        <th:block th:fragment="content">
+                            <h1>
+                                welcome <span th:text="${session.SPRING_SECURITY_CONTEXT.authentication.principal.getUsername()}">Bob</span>
+                            </h1>
+                            <form th:action="@{/logout}" method="post">
+                                <button class="btn btn-primary" type="submit">exit</button>
+                            </form>
+                            <button class="btn btn-primary" onclick="loadPage('/guide','guide')">guide</button>
+                        </th:block>
+                    </div>
+                </div>
+
+
+            </div>
+        </div>
     </div>
+
+
+
     <script th:src="@{/js/loading.js}" src="../../static/js/loading.js"></script>
     <script type="text/javascript">
         $(function () {
-            
+            $(".navbar-brand").click(function () {
+                var isFadeIn = false;
+                if ($(".right-content").hasClass("col-lg-12")) {
+                    $(".right-content").toggleClass('col-lg-12');
+                    $(".right-content").toggleClass('col-lg-10');
+                    isFadeIn = true;
+                }
+                $(".left-menu").fadeToggle('fast', function () {
+                    if (!isFadeIn) {
+                        $(".right-content").toggleClass('col-lg-12');
+                        $(".right-content").toggleClass('col-lg-10');
+                    }
+                })
+            })
+
+            $(".nav").find("a").click(function () {
+                loadPage($(this).data('page'));
+                $(this).parent().siblings(".active").removeClass("active");
+                $(this).parent().addClass("active");
+            })
         })
 
-        
+
     </script>
 </body>
 </html>
