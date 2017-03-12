@@ -1,0 +1,197 @@
+﻿<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="_csrf" th:content="${_csrf.token}" />
+    <meta name="_csrf_header" th:content="${_csrf.headerName}" />
+    <title>home</title>
+
+    <link th:replace="bootstrap" rel="stylesheet" href="../../static/bootstrap-3.3.7-dist/css/bootstrap.css" />
+    <script th:remove="all" src="../../static/js/jquery-3.1.1.js"></script>
+    <script th:remove="all" src="../../static/bootstrap-3.3.7-dist/js/bootstrap.js"></script>
+    <style>
+        .main-content {
+            margin-left: 200px;
+        }
+
+        .nav-tabs {
+            overflow-y: hidden !important;
+        }
+
+        .myMsg {
+            text-align: right;
+        }
+
+        .othersMsg {
+            text-align: left;
+        }
+
+        #msgBox {
+            max-height: 600px;
+            overflow-y: scroll;
+        }
+
+        .popover {
+            position: relative;
+            display: inline-block;
+            float: none;
+            max-width: 100%;
+            width: auto;
+            height: auto;
+            margin: 20px;
+            word-break: break-all;
+        }
+    </style>
+</head>
+<body>
+    <div th:replace="navigator :: navigator"></div>
+    <div class="container-fluid">
+        <div class="row">
+            <ul class="nav nav-pills nav-stacked col-sm-2 left-menu" role="tablist">
+                <li role="presentation" class="active">
+                    <a href="javascript:void(0)" data-page="/">
+                        home
+                    </a>
+                </li>
+                <li role="presentation">
+                    <a href="javascript:void(0)" data-page="/guide">
+                        guide
+                    </a>
+                </li>
+            </ul>
+            <div class="container col-sm-10 right-content">
+
+                <div class="row">
+
+                    <div class="content col-lg-12">
+                        <th:block th:fragment="content">
+                            <h1>
+                                welcome <span th:text="${session.SPRING_SECURITY_CONTEXT.authentication.principal.getUsername()}">Bob</span>
+                            </h1>
+                            <div class="container" id="msgBox"></div>
+                            <div class="form-group">
+                                <div class="input-group">
+                                    <span class="input-group-addon">to:</span>
+                                    <input class="form-control" id="to" type="text" />
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="input-group">
+                                    <input id="msgToSend" class="form-control" type="text" />
+                                    <span class="input-group-btn"><button class="btn btn-primary" id="btnSend">send</button></span>
+                                </div>
+                            </div>
+
+
+                        </th:block>
+                    </div>
+                </div>
+
+
+            </div>
+        </div>
+    </div>
+    <div class="msgExample" hidden="hidden">
+        <div class="myMsg">
+            <div class="popover left">
+                <div class="arrow"></div>
+                <div class="popover-content">
+                    <p></p>
+                </div>
+            </div>
+            <span class="who"></span>
+        </div>
+        <div class="othersMsg">
+            <span class="who"></span>
+            <div class="popover right">
+                <div class="arrow"></div>
+                <div class="popover-content">
+                    <p></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script th:src="@{/js/loading.js}" src="../../static/js/loading.js"></script>
+    <script type="text/javascript">
+        $(function () {
+            $(".navbar-brand").click(function () {
+                var isFadeIn = false;
+                if ($(".right-content").hasClass("col-lg-12")) {
+                    $(".right-content").toggleClass('col-lg-12');
+                    $(".right-content").toggleClass('col-lg-10');
+                    isFadeIn = true;
+                }
+                $(".left-menu").fadeToggle('fast', function () {
+                    if (!isFadeIn) {
+                        $(".right-content").toggleClass('col-lg-12');
+                        $(".right-content").toggleClass('col-lg-10');
+                    }
+                })
+            })
+
+            $(".nav").find("a").click(function () {
+                loadPage($(this).data('page'));
+                $(this).parent().siblings(".active").removeClass("active");
+                $(this).parent().addClass("active");
+            })
+
+            setTimeout(function () {
+                $.ajax("chat", ajaxOption);
+            }, 1000);
+
+            var msgBox = $('<div class="alert alert-info" role="alert"></div>');
+            var ajaxOption = {
+                contentType: "application/json",
+                method: "get",
+                success: function (response) {
+                    if (response.content != undefined) {
+                        var msg = $('.msgExample>.othersMsg').clone();
+                        msg.find('p').html(response.content);
+                        msg.find(".who").text(response.from)
+                        msg.attr('id', 'msg' + ($("#msgBox").children().length + 1));
+                        $("#msgBox").append(msg.show());
+                        $("#msgBox").scrollspy('refresh');
+                        $("#msgBox").scrollspy({ target: '#' + msg.attr('id') })
+                        $("#msgBox").scrollTop($("#msgBox")[0].scrollHeight);
+                    }
+                    setTimeout(function () {
+                        $.ajax("chat", ajaxOption);
+                    }, 1000);
+                },
+                error: function (e) {
+
+                },
+            };
+
+            $("#btnSend").click(function () {
+                $.ajax("chat2", {
+                    contentType: "application/json",
+                    headers: {
+                        "X-CSRF-TOKEN": $("meta[name='_csrf']").attr("content")
+
+                    },
+                    method: "post",
+                    data: JSON.stringify({ to: $("#to").val(), content: $("#msgToSend").val() }),
+                    success: function (response) {
+                        var msg = $('.msgExample>.myMsg').clone();
+                        msg.find('p').html($("#msgToSend").val());
+                        msg.attr('id', 'msg' + ($("#msgBox").children().length + 1));
+                        msg.find(".who").text("me")
+                        $("#msgBox").append(msg.show());
+                        $("#msgBox").scrollspy('refresh');
+                        $("#msgBox").scrollspy({ target: '#' + msg.attr('id') });
+                        $("#msgBox").scrollTop($("#msgBox")[0].scrollHeight);
+                        $("#msgToSend").val('');
+                    },
+                    error: function (e) {
+
+                    },
+                })
+            });
+        })
+
+
+    </script>
+</body>
+</html>
